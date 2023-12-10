@@ -22,7 +22,7 @@ jar {
 
 #### 3) Add implementation
 ```gradle
-implementation files('libs/PDK-1.jar');
+implementation files('libs/PDK-1.2.jar');
 ```
 
 #### 4) Set encoding to UTF-8

@@ -117,7 +117,8 @@ public class TestItem {
 - Custom command completion tree
 - Custom item with event action
 - Custom console printing tree
-
+- Block display raytracer (block display entities)
+- Custom display raytracer (particles... etc)
 
 
 

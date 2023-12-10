@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -35,9 +36,14 @@ public interface CustomCommand extends TabExecutor, Global {
         if (registry == null) {
             return true;
         }
+        if (!(sender instanceof Player) && registry.playersOnly()) {
+            info(sender, "This command is for players only!");
+            return true;
+        }
 
         try {
-            if (!sender.hasPermission(registry.permission().value())) {
+            String perm = registry.permission().value();
+            if (perm != null && !perm.isEmpty() && !sender.hasPermission(perm)) {
                 error(sender, registry.permission().message());
                 return true;
             }

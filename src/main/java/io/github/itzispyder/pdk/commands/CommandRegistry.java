@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 public @interface CommandRegistry {
 
     String value();
-    String usage() default "";
+    String usage() default "none";
     Permission permission() default @Permission("");
     boolean printStackTrace() default false;
+    boolean playersOnly() default false;
 }

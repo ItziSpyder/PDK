@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'io.github.itzispyder'
-version = '1'
+version = project.pdk_version;
 
 repositories {
     mavenCentral()

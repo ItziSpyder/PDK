@@ -5,22 +5,30 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.function.BooleanSupplier;
+
 public interface Global {
+
+    Global instance = new Global(){};
+
+    default JavaPlugin getPlugin() {
+        return getPlugin(PDK.getRegisteredPlugin().getOrThrow("plugin is not registered, make sure PDK.init() is called!"));
+    }
 
     default <T extends JavaPlugin> T getPlugin(Class<T> pluginClass) {
         return JavaPlugin.getPlugin(pluginClass);
     }
 
-    default <T extends JavaPlugin> FileConfiguration getConfig(Class<T> pluginClass) {
-        return getPlugin(pluginClass).getConfig();
+    default FileConfiguration getConfig() {
+        return getPlugin().getConfig();
     }
 
-    default <T extends JavaPlugin> void saveConfig(Class<T> pluginClass) {
-        getPlugin(pluginClass).saveDefaultConfig();
+    default void saveConfig() {
+        getPlugin().saveDefaultConfig();
     }
 
-    default <T extends JavaPlugin> void runSync(Class<T> pluginClass, Runnable task) {
-        Bukkit.getScheduler().runTask(getPlugin(pluginClass), task);
+    default void runSync(Runnable task) {
+        Bukkit.getScheduler().runTask(getPlugin(), task);
     }
 
     default String colorChar(char c, String msg) {
@@ -49,7 +57,13 @@ public interface Global {
                     """.formatted(type, msg));
     }
 
-    static Global get() {
-        return new Global(){};
+    default void checkPre(boolean check, String msg, Object... args) {
+        if (!check) {
+            throw new IllegalArgumentException(msg.formatted(args));
+        }
+    }
+
+    default void checkPre(BooleanSupplier check, String msg, Object... args) {
+        checkPre(check.getAsBoolean(), msg, args);
     }
 }

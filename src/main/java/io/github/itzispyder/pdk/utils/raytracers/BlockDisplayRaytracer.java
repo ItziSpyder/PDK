@@ -1,5 +1,6 @@
 package io.github.itzispyder.pdk.utils.raytracers;
 
+import io.github.itzispyder.pdk.Global;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,11 +16,11 @@ import org.joml.Vector3f;
 
 public class BlockDisplayRaytracer {
 
-    public static <T extends JavaPlugin> void outline(Class<T> pluginClass, Material display, Location location, long stayTime) {
-        outline(pluginClass, display, location, 0.05, stayTime);
+    public static void outline(Material display, Location location, long stayTime) {
+        outline(display, location, 0.05, stayTime);
     }
 
-    public static <T extends JavaPlugin> void outline(Class<T> pluginClass, Material display, Location location, double thickness, long stayTime) {
+    public static void outline(Material display, Location location, double thickness, long stayTime) {
         Location og = location.getBlock().getLocation();
 
         Location a1 = og.clone().add(0, 0, 0);
@@ -32,31 +33,31 @@ public class BlockDisplayRaytracer {
         Location b3 = og.clone().add(1, 1, 1);
         Location b4 = og.clone().add(0, 1, 1);
 
-        trace(pluginClass, display, a1, a2, thickness, stayTime);
-        trace(pluginClass, display, a2, a3, thickness, stayTime);
-        trace(pluginClass, display, a3, a4, thickness, stayTime);
-        trace(pluginClass, display, a4, a1, thickness, stayTime);
+        trace(display, a1, a2, thickness, stayTime);
+        trace(display, a2, a3, thickness, stayTime);
+        trace(display, a3, a4, thickness, stayTime);
+        trace(display, a4, a1, thickness, stayTime);
 
-        trace(pluginClass, display, b1, b2, thickness, stayTime);
-        trace(pluginClass, display, b2, b3, thickness, stayTime);
-        trace(pluginClass, display, b3, b4, thickness, stayTime);
-        trace(pluginClass, display, b4, b1, thickness, stayTime);
+        trace(display, b1, b2, thickness, stayTime);
+        trace(display, b2, b3, thickness, stayTime);
+        trace(display, b3, b4, thickness, stayTime);
+        trace(display, b4, b1, thickness, stayTime);
 
-        trace(pluginClass, display, a1, b1, thickness, stayTime);
-        trace(pluginClass, display, a2, b2, thickness, stayTime);
-        trace(pluginClass, display, a3, b3, thickness, stayTime);
-        trace(pluginClass, display, a4, b4, thickness, stayTime);
+        trace(display, a1, b1, thickness, stayTime);
+        trace(display, a2, b2, thickness, stayTime);
+        trace(display, a3, b3, thickness, stayTime);
+        trace(display, a4, b4, thickness, stayTime);
     }
 
-    public static <T extends JavaPlugin> void trace(Class<T> pluginClass, Material display, Location start, Location end, long stayTime) {
-        trace(pluginClass, display, start, end.toVector().subtract(start.toVector()), 0.05, end.distance(start), stayTime);
+    public static void trace(Material display, Location start, Location end, long stayTime) {
+        trace(display, start, end.toVector().subtract(start.toVector()), 0.05, end.distance(start), stayTime);
     }
 
-    public static <T extends JavaPlugin> void trace(Class<T> pluginClass, Material display, Location start, Location end, double thickness, long stayTime) {
-        trace(pluginClass, display, start, end.toVector().subtract(start.toVector()), thickness, end.distance(start), stayTime);
+    public static void trace(Material display, Location start, Location end, double thickness, long stayTime) {
+        trace(display, start, end.toVector().subtract(start.toVector()), thickness, end.distance(start), stayTime);
     }
 
-    public static <T extends JavaPlugin> void trace(Class<T> pluginClass, Material display, Location start, Vector direction, double thickness, double distance, long stayTime) {
+    public static void trace(Material display, Location start, Vector direction, double thickness, double distance, long stayTime) {
         World world = start.getWorld();
 
         BlockDisplay beam = world.spawn(start, BlockDisplay.class, entity -> {
@@ -73,11 +74,11 @@ public class BlockDisplayRaytracer {
             entity.setInterpolationDelay(0);
             entity.setTransformation(trans);
 
-            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(pluginClass), entity::remove, stayTime);
+            Bukkit.getScheduler().runTaskLater(Global.instance.getPlugin(), entity::remove, stayTime);
         });
     }
 
-    public static <T extends JavaPlugin> void trace(Class<T> pluginClass, Material display, Location start, Vector direction, double thickness, double distance, long stayTime, Consumer<BlockDisplay> onEntitySpawn) {
+    public static void trace(Material display, Location start, Vector direction, double thickness, double distance, long stayTime, Consumer<BlockDisplay> onEntitySpawn) {
         World world = start.getWorld();
 
         BlockDisplay beam = world.spawn(start, BlockDisplay.class, entity -> {
@@ -94,7 +95,7 @@ public class BlockDisplayRaytracer {
             entity.setInterpolationDelay(0);
             entity.setTransformation(trans);
 
-            JavaPlugin plugin = JavaPlugin.getPlugin(pluginClass);
+            JavaPlugin plugin = Global.instance.getPlugin();
             Bukkit.getScheduler().runTaskLater(plugin, entity::remove, stayTime);
             Bukkit.getScheduler().runTaskLater(plugin, () -> onEntitySpawn.accept(entity), 5);
         });

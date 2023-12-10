@@ -1,16 +1,23 @@
 package io.github.itzispyder.pdk;
 
 import io.github.itzispyder.pdk.events.listeners.RegistryListeners;
+import io.github.itzispyder.pdk.utils.misc.Voidable;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PDK {
 
     private static boolean active = false;
+    private static Class<? extends JavaPlugin> plugin;
 
     public static synchronized void init(JavaPlugin plugin) {
-        if (!active) {
+        if (plugin != null && !active) {
             active = true;
-            new RegistryListeners().register(plugin.getClass());
+            PDK.plugin = plugin.getClass();
+            new RegistryListeners().register();
         }
+    }
+
+    public static Voidable<Class<? extends JavaPlugin>> getRegisteredPlugin() {
+        return Voidable.of(plugin);
     }
 }

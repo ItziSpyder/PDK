@@ -1,11 +1,11 @@
 package io.github.itzispyder.pdk.utils;
 
+import io.github.itzispyder.pdk.Global;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,15 +78,15 @@ public final class ServerUtils {
         sendTitle(targets, title, "", in, stay, out);
     }
 
-    public static <T extends JavaPlugin> void dispatch(Class<T> pluginClass, CommandSender sender, String command) {
-        Bukkit.getScheduler().runTask(JavaPlugin.getPlugin(pluginClass), () -> Bukkit.dispatchCommand(sender, command));
+    public static void dispatch(CommandSender sender, String command) {
+        Bukkit.getScheduler().runTask(Global.instance.getPlugin(), () -> Bukkit.dispatchCommand(sender, command));
     }
 
-    public static <T extends JavaPlugin> void dispatch(Class<T> pluginClass, String command) {
-        dispatch(pluginClass, Bukkit.getConsoleSender(), command);
+    public static void dispatch(String command) {
+        dispatch(Bukkit.getConsoleSender(), command);
     }
 
-    public static <T extends JavaPlugin> void dispatchf(Class<T> pluginClass, String command, Object... args) {
-        dispatch(pluginClass, command.formatted(args));
+    public static void dispatchf(String command, Object... args) {
+        dispatch(command.formatted(args));
     }
 }

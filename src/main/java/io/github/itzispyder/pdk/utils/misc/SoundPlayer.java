@@ -1,13 +1,13 @@
 package io.github.itzispyder.pdk.utils.misc;
 
+import io.github.itzispyder.pdk.Global;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class SoundPlayer {
+public class SoundPlayer implements Global {
 
     private Location location;
     private Sound sound;
@@ -98,7 +98,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeat(Plugin plugin, Player player, int times, int tickDelay) {
+    public void repeat(Player player, int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -110,7 +110,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     /**
@@ -120,7 +120,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAt(Plugin plugin, Player player, int times, int tickDelay) {
+    public void repeatAt(Player player, int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -132,7 +132,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     /**
@@ -141,7 +141,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAll(Plugin plugin, int times, int tickDelay) {
+    public void repeatAll(int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -153,7 +153,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     /**
@@ -162,7 +162,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAllAt(Plugin plugin, int times, int tickDelay) {
+    public void repeatAllAt(int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -174,7 +174,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     /**
@@ -184,7 +184,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAll(Plugin plugin, double radius,int times, int tickDelay) {
+    public void repeatAll(double radius,int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -196,7 +196,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     /**
@@ -206,7 +206,7 @@ public class SoundPlayer {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAllAt(Plugin plugin, double distance, int times, int tickDelay) {
+    public void repeatAllAt(double distance, int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
@@ -218,7 +218,7 @@ public class SoundPlayer {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(plugin,0,tickDelay);
+        }.runTaskTimer(getPlugin(),0,tickDelay);
     }
 
     public Sound getSound() {

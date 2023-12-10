@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +19,9 @@ public interface CustomCommand extends TabExecutor, Global {
 
     void dispatchCompletions(CompletionBuilder b);
 
-    default <T extends JavaPlugin> void register(Class<T> pluginClass) {
+    default void register() {
         CommandRegistry registry = this.getClass().getAnnotation(CommandRegistry.class);
-        PluginCommand command = getPlugin(pluginClass).getCommand(registry.value());
+        PluginCommand command = getPlugin().getCommand(registry.value());
 
         if (command != null) {
             command.setExecutor(this);

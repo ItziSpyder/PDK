@@ -1,9 +1,11 @@
 package io.github.itzispyder.pdk.utils.misc;
 
+import io.github.itzispyder.pdk.Global;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Voidable<T> {
+public class Voidable<T> implements Global {
 
     private final T value;
 
@@ -29,9 +31,13 @@ public class Voidable<T> {
         return isPresent() ? value : fallback;
     }
 
-    public T getOrThrow() {
-        assert isPresent() : "value is not present.";
+    public T getOrThrow(String msg, Object... args) {
+        checkPre(isPresent(), msg, args);
         return value;
+    }
+
+    public T getOrThrow() {
+        return getOrThrow("value is not present.");
     }
 
     public <U> Voidable<U> map(Function<T, U> function) {

@@ -36,6 +36,32 @@ tasks.withType(JavaCompile).configureEach {
 }
 ```
 
+#### 5) Initialize PDK `PDK.init(this)`
+```java
+public final class CustomPlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        // Plugin startup logic
+        PDK.init(this);
+
+        // commands
+        new TestCommand().register(CustomPlugin.class);
+
+        // listeners
+        new TestListener().register(CustomPlugin.class);
+
+        // Items
+        new TestCustomItem().register();
+    }
+
+    @Override
+    public void onDisable() {
+        // Plugin shutdown logic
+    }
+}
+```
+
 ---
 
 ### GUI Builders

@@ -23,7 +23,7 @@ jar {
 #### 3) Add implementation
 ```gradle
 dependencies {
-    implementation files('libs/PDK-1.2.jar');
+    implementation files('libs/PDK-1.3.jar');
 }
 ```
 

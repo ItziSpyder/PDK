@@ -4,6 +4,10 @@ import io.github.itzispyder.pdk.events.listeners.RegistryListeners;
 import io.github.itzispyder.pdk.utils.misc.Voidable;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * TODO: (1) update version in gradle.properties
+ * TODO: (2) update jar file version in README.md
+ */
 public final class PDK {
 
     private static boolean active = false;

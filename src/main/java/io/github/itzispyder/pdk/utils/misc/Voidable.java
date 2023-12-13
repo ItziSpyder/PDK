@@ -21,9 +21,22 @@ public class Voidable<T> implements Global {
         return value != null;
     }
 
+    public <U> Voidable<U> map(Function<T, U> function) {
+        return isPresent() ? of(function.apply(value)) : of(null);
+    }
+
     public void accept(Consumer<T> action) {
         if (isPresent()) {
             action.accept(value);
+        }
+    }
+
+    public void accept(Consumer<T> action, Runnable orElse) {
+        if (isPresent()) {
+            action.accept(value);
+        }
+        else {
+            orElse.run();
         }
     }
 
@@ -38,10 +51,6 @@ public class Voidable<T> implements Global {
 
     public T getOrThrow() {
         return getOrThrow("value is not present.");
-    }
-
-    public <U> Voidable<U> map(Function<T, U> function) {
-        return of(function.apply(value));
     }
 
     public static <T> Voidable<T> of(T value) {

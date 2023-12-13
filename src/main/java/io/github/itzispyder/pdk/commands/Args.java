@@ -1,5 +1,6 @@
 package io.github.itzispyder.pdk.commands;
 
+import java.util.function.Consumer;
 import java.util.regex.PatternSyntaxException;
 
 public record Args(String... args) {
@@ -35,7 +36,13 @@ public record Args(String... args) {
         if (index < 0 || index >= args.length) {
             return false;
         }
-        return get(index).stringValue().equalsIgnoreCase(arg);
+        return get(index).toString().equalsIgnoreCase(arg);
+    }
+
+    public void when(int index, String match, Consumer<Arg> action) {
+        if (match(index, match)) {
+            action.accept(get(index));
+        }
     }
 
     public int getSize() {
@@ -49,7 +56,7 @@ public record Args(String... args) {
             this.arg = arg;
         }
 
-        public int intValue() {
+        public int toInt() {
             try {
                 return Integer.parseInt(arg.replaceAll("[^0-9-+]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -57,7 +64,7 @@ public record Args(String... args) {
             }
         }
 
-        public long longValue() {
+        public long toLong() {
             try {
                 return Long.parseLong(arg.replaceAll("[^0-9-+]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -65,7 +72,7 @@ public record Args(String... args) {
             }
         }
 
-        public byte byteValue() {
+        public byte toByte() {
             try {
                 return Byte.parseByte(arg.replaceAll("[^0-9-+]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -73,7 +80,7 @@ public record Args(String... args) {
             }
         }
 
-        public short shortValue() {
+        public short toShort() {
             try {
                 return Short.parseShort(arg.replaceAll("[^0-9-+]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -81,7 +88,7 @@ public record Args(String... args) {
             }
         }
 
-        public double doubleValue() {
+        public double toDouble() {
             try {
                 return Double.parseDouble(arg.replaceAll("[^0-9-+e.]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -89,7 +96,7 @@ public record Args(String... args) {
             }
         }
 
-        public float floatValue() {
+        public float toFloat() {
             try {
                 return Float.parseFloat(arg.replaceAll("[^0-9-+e.]", ""));
             } catch (NumberFormatException | PatternSyntaxException ex) {
@@ -97,19 +104,20 @@ public record Args(String... args) {
             }
         }
 
-        public boolean booleanValue() {
+        public boolean toBool() {
             return Boolean.parseBoolean(arg);
         }
 
-        public char charValue() {
+        public char toChar() {
             return arg.isEmpty() ? ' ' : arg.charAt(0);
         }
 
-        public String stringValue() {
+        @Override
+        public String toString() {
             return arg;
         }
 
-        public <T extends Enum<?>> T enumValue(Class<T> enumType, T fallback) {
+        public <T extends Enum<?>> T toEnum(Class<T> enumType, T fallback) {
             for (T constant : enumType.getEnumConstants()) {
                 if (arg.equalsIgnoreCase(constant.name())) {
                     return constant;

@@ -1,14 +1,11 @@
 # PDK
 The Best Plugin Development Kit
-
+<br>
+Now with Jitpack
 ---
 ### Adding to Gradle
 
-#### 1) Adding to Project
-- Create a `libs` folder if you don't already have one
-- Download the JAR from releases here and drag it into the `libs` folder
-
-#### 2) Register jar
+#### 1) Duplicates strategy
 ```gradle
 jar {
     from {
@@ -20,14 +17,19 @@ jar {
 }
 ```
 
-#### 3) Add implementation
+#### 2) Add implementations
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
 ```gradle
 dependencies {
-    implementation files('libs/PDK-1.3.jar');
+    implementation "com.github.ItziSpyder:PDK:1.3.0"
 }
 ```
 
-#### 4) Set encoding to UTF-8
+#### 3) Set encoding to UTF-8
 ```gradle
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile).configureEach {
@@ -38,7 +40,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 ```
 
-#### 5) Initialize PDK `PDK.init(this)`
+#### 4) Initialize PDK `PDK.init(this)`
 ```java
 public final class CustomPlugin extends JavaPlugin {
 

@@ -25,7 +25,7 @@ repositories {
 ```
 ```gradle
 dependencies {
-    implementation "com.github.ItziSpyder:PDK:1.3.1"
+    implementation 'com.github.ItziSpyder:PDK:main-SNAPSHOT'
 }
 ```
 

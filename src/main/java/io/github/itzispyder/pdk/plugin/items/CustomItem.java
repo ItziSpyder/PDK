@@ -1,6 +1,6 @@
 package io.github.itzispyder.pdk.plugin.items;
 
-import io.github.itzispyder.pdk.plugin.builders.ItemBuilder;
+import io.github.itzispyder.pdk.utils.misc.Voidable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -9,51 +9,45 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class CustomItem {
+public interface CustomItem {
 
-    private static final Map<Class<? extends CustomItem>, CustomItem> items = new HashMap<>();
-    private static final Map<String, CustomItem> registry = new HashMap<>();
-    private ItemStack item;
-    private String name;
+    Map<Class<? extends CustomItem>, CustomItem> items = new HashMap<>();
+    Map<String, CustomItem> registry = new HashMap<>();
 
-    public CustomItem(String name) {
-        this.name = name;
-    }
+    ItemStack getItem();
+    void onInteract(Player player, Action action, ItemStack item, PlayerInteractEvent event);
 
-    public abstract void buildItem(ItemBuilder builder);
-    public abstract void onInteract(Player player, Action action, ItemStack item, PlayerInteractEvent event);
-
-    public static void handleInteraction(PlayerInteractEvent event) {
-        String display = getDisplay(event.getItem());
-        if (registry.containsKey(display)) {
-            registry.get(display).onInteract(event.getPlayer(), event.getAction(), event.getItem(), event);
-        }
-    }
-
-    public ItemStack register() {
+    default ItemStack register() {
         return register(this);
     }
 
-    public static <T extends CustomItem> T get(Class<T> key) {
+    default String getName() {
+        String[] name = {"unnamed-custom-item"};
+        Voidable.of(this.getClass().getAnnotation(ItemRegistry.class)).accept(registry -> name[0] = registry.value());
+        return name[0];
+    }
+
+    static Map<String, CustomItem> getRegistry() {
+        return new HashMap<>(registry);
+    }
+
+    static boolean matchDisplay(ItemStack a, ItemStack b) {
+        return getDisplay(a).equals(getDisplay(b));
+    }
+
+    static boolean matchDisplay(String a, ItemStack b) {
+        return a.equals(getDisplay(b));
+    }
+
+    static boolean matchDisplay(ItemStack a, String b) {
+        return getDisplay(a).equals(b);
+    }
+
+    static <T extends CustomItem> T get(Class<T> key) {
         return (T)items.get(key);
     }
 
-    private static ItemStack register(CustomItem customItem) {
-        ItemBuilder builder = ItemBuilder.create();
-        customItem.buildItem(builder);
-        ItemStack item = builder.build();
-
-        customItem.setItem(item);
-        items.put(customItem.getClass(), customItem);
-        registry.put(getDisplay(item), customItem);
-        return item;
-    }
-
-    public ItemStack getItem() {
-        return item;
-    }
-
-    public static String getDisplay(ItemStack item) {
+    static String getDisplay(ItemStack item) {
         if (item == null) {
             return "";
         }
@@ -65,27 +59,17 @@ public abstract class CustomItem {
         }
     }
 
-    public String getName() {
-        return name;
+    static void handleInteraction(PlayerInteractEvent event) {
+        String display = getDisplay(event.getItem());
+        if (registry.containsKey(display)) {
+            registry.get(display).onInteract(event.getPlayer(), event.getAction(), event.getItem(), event);
+        }
     }
 
-    private void setItem(ItemStack item) {
-        this.item = item;
-    }
-
-    public static Map<String, CustomItem> getRegistry() {
-        return new HashMap<>(registry);
-    }
-
-    public static boolean matchDisplay(ItemStack a, ItemStack b) {
-        return getDisplay(a).equals(getDisplay(b));
-    }
-
-    public static boolean matchDisplay(String a, ItemStack b) {
-        return a.equals(getDisplay(b));
-    }
-
-    public static boolean matchDisplay(ItemStack a, String b) {
-        return getDisplay(a).equals(b);
+    private static ItemStack register(CustomItem customItem) {
+        ItemStack item = customItem.getItem();
+        items.put(customItem.getClass(), customItem);
+        registry.put(getDisplay(item), customItem);
+        return item;
     }
 }

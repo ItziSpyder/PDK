@@ -46,7 +46,7 @@ public class SoundPlayer implements Global {
      *
      * @param player Player
      */
-    public void playAt(Player player) {
+    public void playIndividually(Player player) {
         player.playSound(player.getLocation(),this.sound,this.volume,this.pitch);
     }
 
@@ -68,7 +68,7 @@ public class SoundPlayer implements Global {
      *
      * @param distance double
      */
-    public void playWithinAt(double distance) {
+    public void playWithinIndividually(double distance) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p != null && p.getWorld() == this.location.getWorld() && p.getLocation().distance(this.location) < distance) {
                 p.playSound(p.getLocation(),this.sound,this.volume,this.pitch);
@@ -87,7 +87,7 @@ public class SoundPlayer implements Global {
     /**
      * Plays the sound to all players on the server, but at the players' location.
      */
-    public void playAllAt() {
+    public void playAllIndividually() {
         for (Player p : Bukkit.getOnlinePlayers()) p.playSound(p.getLocation(),this.sound,this.volume,this.pitch);
     }
 
@@ -120,13 +120,13 @@ public class SoundPlayer implements Global {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAt(Player player, int times, int tickDelay) {
+    public void repeatIndividually(Player player, int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
             public void run() {
                 if (i < times) {
-                    playAt(player);
+                    playIndividually(player);
                     i ++;
                 } else {
                     this.cancel();
@@ -162,13 +162,13 @@ public class SoundPlayer implements Global {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAllAt(int times, int tickDelay) {
+    public void repeatAllIndividually(int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
             public void run() {
                 if (i < times) {
-                    playAllAt();
+                    playAllIndividually();
                     i ++;
                 } else {
                     this.cancel();
@@ -206,13 +206,13 @@ public class SoundPlayer implements Global {
      * @param times int
      * @param tickDelay int
      */
-    public void repeatAllAt(double distance, int times, int tickDelay) {
+    public void repeatAllIndividually(double distance, int times, int tickDelay) {
         new BukkitRunnable() {
             int i = 0;
             @Override
             public void run() {
                 if (i < times) {
-                    playWithinAt(distance);
+                    playWithinIndividually(distance);
                     i ++;
                 } else {
                     this.cancel();

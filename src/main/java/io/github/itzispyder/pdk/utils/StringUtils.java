@@ -2,7 +2,9 @@ package io.github.itzispyder.pdk.utils;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.BiPredicate;
 
 public final class StringUtils {
@@ -121,7 +123,7 @@ public final class StringUtils {
         final List<String> lines = new ArrayList<>();
 
         if (s.length() <= maxLen) {
-            splitAdd(lines, s);
+            lines.add(s);
             return lines;
         }
 
@@ -131,11 +133,11 @@ public final class StringUtils {
                 while (nextChar(s, wrapAt) != ' ') {
                     wrapAt ++;
                 }
-                splitAdd(lines, s.substring(0, wrapAt + 1).trim());
+                lines.add(s.substring(0, wrapAt + 1).trim());
                 s = s.substring(wrapAt + 1);
             }
             else {
-                splitAdd(lines, s.substring(0, maxLen).trim());
+                lines.add(s.substring(0, maxLen).trim());
                 s = s.substring(maxLen);
             }
         }
@@ -144,17 +146,6 @@ public final class StringUtils {
         }
 
         return lines;
-    }
-
-    public static void splitAdd(Collection<String> c, String s) {
-        if (s == null || c == null) return;
-
-        if (s.contains("<n>")) {
-            c.addAll(Arrays.asList(s.split("<n>")));
-        }
-        else {
-            c.add(s);
-        }
     }
 
     public static String getCurrentTimeStamp() {

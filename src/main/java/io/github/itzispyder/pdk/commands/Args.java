@@ -49,6 +49,10 @@ public record Args(String... args) {
         return args.length;
     }
 
+    public boolean isEmpty() {
+        return args.length == 0;
+    }
+
     public static class Arg {
         private final String arg;
 

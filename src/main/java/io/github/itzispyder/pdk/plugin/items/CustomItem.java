@@ -43,8 +43,17 @@ public interface CustomItem {
         return getDisplay(a).equals(b);
     }
 
-    static <T extends CustomItem> T get(Class<T> key) {
+    static <T extends CustomItem> T getItemByClass(Class<T> key) {
         return (T)items.get(key);
+    }
+
+    static CustomItem getItemByName(String itemId) {
+        for (CustomItem value : registry.values()) {
+            if (value.getName().equalsIgnoreCase(itemId)) {
+                return value;
+            }
+        }
+        return null;
     }
 
     static String getDisplay(ItemStack item) {

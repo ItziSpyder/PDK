@@ -18,6 +18,14 @@ public final class ServerUtils {
         return new ArrayList<>(Bukkit.getOnlinePlayers());
     }
 
+    public static List<String> nameList() {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+    }
+
+    public static String[] nameArray() {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).toArray(String[]::new);
+    }
+
     public static List<? extends Player> players(Predicate<Player> targets) {
         return Bukkit.getOnlinePlayers().stream().filter(targets).toList();
     }

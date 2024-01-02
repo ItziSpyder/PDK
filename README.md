@@ -18,14 +18,14 @@ jar {
 ```
 
 #### 2) Add implementations
-```gradle
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+```yml
+- download latest release of PDK
+- create a folder named libs in your project and drag your downloaded jar in there
+- type the following down in your build.gradle
 ```
 ```gradle
 dependencies {
-    implementation 'com.github.ItziSpyder:PDK:main-SNAPSHOT'
+    implementation file("libs/PDK-1.3.2.jar")
 }
 ```
 

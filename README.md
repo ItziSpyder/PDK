@@ -25,7 +25,7 @@ jar {
 ```
 ```gradle
 dependencies {
-    implementation file("libs/PDK-1.3.2.jar")
+    implementation files("libs/PDK-1.3.2.jar")
 }
 ```
 

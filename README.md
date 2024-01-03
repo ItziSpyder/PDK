@@ -1,7 +1,6 @@
 # PDK
 The Best Plugin Development Kit
 <br>
-Now with Jitpack
 ---
 ### Adding to Gradle
 

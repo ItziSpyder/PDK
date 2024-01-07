@@ -10,7 +10,7 @@ jar {
     from {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it);
+            it.isDirectory() ? it : zipTree(it)
         }
     }
 }

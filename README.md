@@ -24,7 +24,7 @@ jar {
 ```
 ```gradle
 dependencies {
-    implementation files("libs/PDK-1.3.2.jar")
+    implementation files("libs/PDK-1.3.3.jar")
 }
 ```
 
@@ -49,10 +49,10 @@ public final class CustomPlugin extends JavaPlugin {
         PDK.init(this);
 
         // commands
-        new TestCommand().register(CustomPlugin.class);
+        new TestCommand().register();
 
         // listeners
-        new TestListener().register(CustomPlugin.class);
+        new TestListener().register();
 
         // Items
         new TestCustomItem().register();
@@ -73,7 +73,7 @@ Create complex GUI's with a few simple calls!
 public class TestGUI {
 
     public static final CustomGui GUI = CustomGui.create()
-            .title("&6Super Epik Title")
+            .title("Super Epik Title")
             .size(27)
             .onClose(e -> e.getPlayer().sendMessage("e"))
             .defineMain(e -> {
@@ -110,6 +110,35 @@ public class TestItem {
             .enchant(Enchantment.MENDING, 5)
             .count(64)
             .build();
+}
+```
+
+### Discord Webhooks
+Sick of parsing JSON? No worries!
+```java
+public class DiscordWebhookSender {
+
+    public static void sendWebhook(String webhookUrl) {
+        DiscordWebhook.create() // none of the below are required, required ones already have their default values from the builder
+                .username(/* custom username of the webhook */)
+                .textToSpeech() // enables text to speech
+                .avatar(/* custom avatar url */)
+                .content(/* the message to send */)
+                .addEmbed(new DiscordEmbed.Image(/* send an embed with only an image */))
+                .addEmbed(DiscordEmbed.create()
+                        .url(/* embed title's click event url */)
+                        .desc/* embed description */()
+                        .title(/* embed title */)
+                        .author(/* embed's author stamp (top left) */)
+                        .image(/* embed's image */)
+                        .footer(/* embed's footer */)
+                        .color(/* embed's side color */)
+                        .thumbnail(/* embed's thumbnail */)
+                        .timestamp(/* embed's timestamp, suggested "LocalDateTime.now()" */)
+                        .addField(/* add embed field */)
+                        .build())
+                .send(webhookUrl); // provide a webhook url
+    }
 }
 ```
 

@@ -30,6 +30,19 @@ public class Randomizer {
         return (int)(Math.ceil(Math.random() * listSize) - 1);
     }
 
+    public boolean getRandomBoolean() {
+        return Math.random() < 0.5;
+    }
+
+    /**
+     * 'Percentage' means an integer from 0-100. You should not divide this value by 100, as this does it for you.
+     * @param percentage an integer 0-100
+     * @return true if chance hit, false otherwise
+     */
+    public boolean getRandomChance(int percentage) {
+        return Math.random() < percentage / 100.0;
+    }
+
     public int getRandomInt(int min, int max) {
         if (min > max) {
             throw new IllegalArgumentException("min cannot be greater than max!");

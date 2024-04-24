@@ -98,7 +98,7 @@ public class Client extends ConnectionThread {
     }
 
     public void disconnect() {
-        sendToServer(new Response(Response.Method.TO_SERVER, Response.Type.DEAD_FISH, "nigger"));
+        sendToServer(new Response(Response.Method.TO_SERVER, Response.Type.DEAD_FISH));
 
         try {
             socket.close();

@@ -1,7 +1,6 @@
 package io.github.itzispyder.pdk.commands;
 
 import java.util.function.Consumer;
-import java.util.regex.PatternSyntaxException;
 
 public record Args(String... args) {
 
@@ -61,51 +60,27 @@ public record Args(String... args) {
         }
 
         public int toInt() {
-            try {
-                return Integer.parseInt(arg.replaceAll("[^0-9-+]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0;
-            }
+            return Integer.parseInt(arg);
         }
 
         public long toLong() {
-            try {
-                return Long.parseLong(arg.replaceAll("[^0-9-+]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0L;
-            }
+            return Long.parseLong(arg);
         }
 
         public byte toByte() {
-            try {
-                return Byte.parseByte(arg.replaceAll("[^0-9-+]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0;
-            }
+            return Byte.parseByte(arg);
         }
 
         public short toShort() {
-            try {
-                return Short.parseShort(arg.replaceAll("[^0-9-+]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0;
-            }
+            return Short.parseShort(arg);
         }
 
         public double toDouble() {
-            try {
-                return Double.parseDouble(arg.replaceAll("[^0-9-+e.]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0.0;
-            }
+            return Double.parseDouble(arg);
         }
 
         public float toFloat() {
-            try {
-                return Float.parseFloat(arg.replaceAll("[^0-9-+e.]", ""));
-            } catch (NumberFormatException | PatternSyntaxException ex) {
-                return 0.0F;
-            }
+            return Float.parseFloat(arg);
         }
 
         public boolean toBool() {
@@ -121,12 +96,18 @@ public record Args(String... args) {
             return arg;
         }
 
+        public <T extends Enum<?>> T toEnum(Class<T> enumType) {
+            return toEnum(enumType, null);
+        }
+
         public <T extends Enum<?>> T toEnum(Class<T> enumType, T fallback) {
-            for (T constant : enumType.getEnumConstants()) {
-                if (arg.equalsIgnoreCase(constant.name())) {
+            String arg = this.arg.replace('-', '_');
+            for (T constant : enumType.getEnumConstants())
+                if (arg.equalsIgnoreCase(constant.name()))
                     return constant;
-                }
-            }
+
+            if (fallback == null)
+                throw new IllegalArgumentException("'%s' is not a value of %s".formatted(arg, enumType.getSimpleName()));
             return fallback;
         }
     }

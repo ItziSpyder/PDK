@@ -1,7 +1,9 @@
-package io.github.itzispyder.pdk.utils.misc;
+package io.github.itzispyder.pdk.utils.misc.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.github.itzispyder.pdk.utils.FileValidationUtils;
 
 import java.io.*;
@@ -44,6 +46,61 @@ public interface JsonSerializable<T> {
         catch (Exception ex) {
             return null;
         }
+    }
+
+    default JsonObject getJson() {
+        return gson.toJsonTree(this).getAsJsonObject();
+    }
+
+    /**
+     * Gets a json element given the specified member path
+     * @param path Path separated by a period . between each member name
+     * @return the JsonElement at the end of the path, otherwise null
+     */
+    default JsonElement get(String path) {
+        JsonElement root = gson.toJsonTree(this);
+        JsonElement json = root;
+
+        for (String memberName : path.split("\\.")) {
+            JsonElement e = json.getAsJsonObject().get(memberName);
+            if (e != null)
+                json = e;
+            else
+                break;
+        }
+
+        return json == root ? null : json;
+    }
+
+    /**
+     * Gets a json element given the specified member path
+     * @param path Path separated by a period . between each member name
+     */
+    default boolean set(String path, Object obj) {
+        JsonElement root = gson.toJsonTree(this);
+        JsonElement json = root;
+        String[] paths = path.split("\\.");
+
+        if (paths.length == 0)
+            return false;
+        if (paths.length == 1) {
+            root.getAsJsonObject().add(path, gson.toJsonTree(obj));
+            return true;
+        }
+
+        for (int i = 0; i < paths.length - 1; i++) {
+            JsonElement e = json.getAsJsonObject().get(paths[i]);
+            if (e != null)
+                json = e;
+            else
+                break;
+        }
+
+        if (json != root) {
+            json.getAsJsonObject().add(paths[paths.length - 1], gson.toJsonTree(obj));
+            return true;
+        }
+        return false;
     }
 
     default void save() {

@@ -1,15 +1,15 @@
 package io.github.itzispyder.pdk.utils.raytracers;
 
 import io.github.itzispyder.pdk.Global;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
+import org.bukkit.util.VoxelShape;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
@@ -53,6 +53,51 @@ public class BlockDisplayRaytracer {
         a.add(trace(display, a4, b4, thickness, stayTime));
 
         return a;
+    }
+
+    public static void highlightCollisions(Block block, Color color, long stayTime) {
+        if (block == null || block.isEmpty() || !block.isCollidable())
+            return;
+
+        VoxelShape shape = block.getCollisionShape();
+        World world = block.getWorld();
+        Vector offset = block.getLocation().toVector();
+
+        for (BoundingBox box : shape.getBoundingBoxes()) {
+            highlight(box, offset, world, color, stayTime);
+        }
+    }
+
+    public static void highlight(BoundingBox box, Vector offset, World world, Color color, long stayTime) {
+        double x1 = box.getMinX() + offset.getX();
+        double y1 = box.getMinY() + offset.getY();
+        double z1 = box.getMinZ() + offset.getZ();
+        double x2 = box.getMaxX() + offset.getX();
+        double y2 = box.getMaxY() + offset.getY();
+        double z2 = box.getMaxZ() + offset.getZ();
+
+        traceGlowing(world, x1, y1, z1, x2, y1, z1, color, stayTime);
+        traceGlowing(world, x2, y1, z1, x2, y1, z2, color, stayTime);
+        traceGlowing(world, x2, y1, z2, x1, y1, z2, color, stayTime);
+        traceGlowing(world, x1, y1, z2, x1, y1, z1, color, stayTime);
+
+        traceGlowing(world, x1, y2, z1, x2, y2, z1, color, stayTime);
+        traceGlowing(world, x2, y2, z1, x2, y2, z2, color, stayTime);
+        traceGlowing(world, x2, y2, z2, x1, y2, z2, color, stayTime);
+        traceGlowing(world, x1, y2, z2, x1, y2, z1, color, stayTime);
+
+        traceGlowing(world, x1, y1, z1, x1, y2, z1, color, stayTime);
+        traceGlowing(world, x2, y1, z1, x2, y2, z1, color, stayTime);
+        traceGlowing(world, x2, y1, z2, x2, y2, z2, color, stayTime);
+        traceGlowing(world, x1, y1, z2, x1, y2, z2, color, stayTime);
+    }
+
+    public static void traceGlowing(World world, double x1, double y1, double z1, double x2, double y2, double z2, Color color, long stayTime) {
+        Location loc1 = new Location(world, x1, y1, z1);
+        Location loc2 = new Location(world, x2, y2, z2);
+        BlockDisplay ent = trace(Material.WHITE_CONCRETE, loc1, loc2, 0.01, stayTime);
+        ent.setGlowColorOverride(color);
+        ent.setGlowing(true);
     }
 
     public static BlockDisplay trace(Material display, Location start, Location end, long stayTime) {

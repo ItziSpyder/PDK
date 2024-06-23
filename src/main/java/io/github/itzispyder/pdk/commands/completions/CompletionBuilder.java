@@ -8,9 +8,10 @@ public class CompletionBuilder {
     private final CompletionNode root;
     private final List<CompletionBuilder> options;
     private boolean isBranch;
+    private String regex;
 
     CompletionBuilder(List<String> names) {
-        this.root = new CompletionNode(names, new ArrayList<>());
+        this.root = new CompletionNode(names, new ArrayList<>(), null);
         this.options = new ArrayList<>();
         this.isBranch = false;
     }
@@ -21,6 +22,13 @@ public class CompletionBuilder {
         this.isBranch = false;
     }
 
+    public CompletionBuilder(String regex, String details) {
+        this.root = new CompletionNode(Collections.singletonList(details), new ArrayList<>(), regex);
+        this.options = new ArrayList<>();
+        this.isBranch = false;
+        this.regex = regex;
+    }
+
     public CompletionBuilder then(CompletionBuilder arg) {
         options.add(arg);
         root.nextOptions.add(arg.root);
@@ -29,6 +37,12 @@ public class CompletionBuilder {
 
     public CompletionBuilder arg(List<String> name) {
         CompletionBuilder b = new CompletionBuilder(name);
+        b.isBranch = true;
+        return b;
+    }
+
+    public CompletionBuilder argRegex(String regex, String details) {
+        CompletionBuilder b = new CompletionBuilder(regex, details);
         b.isBranch = true;
         return b;
     }
@@ -63,5 +77,13 @@ public class CompletionBuilder {
             throw new IllegalArgumentException("build() cannot be called on branches!");
         }
         return root;
+    }
+
+    public boolean isBranch() {
+        return isBranch;
+    }
+
+    public boolean isRegex() {
+        return regex != null;
     }
 }

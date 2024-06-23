@@ -5,7 +5,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.bukkit.util.VoxelShape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,18 @@ public class CustomDisplayRaytracer {
 
     public static final Predicate<Point> HIT_BLOCK = point -> {
         Block b = point.getBlock();
-        Vector v = point.getLoc().toVector();
-        return !b.isPassable() && b.getCollisionShape().getBoundingBoxes().stream().noneMatch(box -> box.contains(v));
+        Location l = point.getLoc();
+
+        if (b == null || b.isEmpty() || !b.isCollidable())
+            return false;
+
+        Vector vec = l.toVector().subtract(b.getLocation().toVector());
+        VoxelShape shape = b.getCollisionShape();
+
+        for (BoundingBox box : shape.getBoundingBoxes())
+            if (box.contains(vec))
+                return true;
+        return false;
     };
 
     public static final Predicate<Point> HIT_ENTITY = point -> {

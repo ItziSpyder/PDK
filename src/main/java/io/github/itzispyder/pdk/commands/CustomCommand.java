@@ -71,9 +71,22 @@ public interface CustomCommand extends TabExecutor, Global {
                 node = node.next(args[i]);
             }
 
+            String end = args[args.length - 1];
             List<String> a = new ArrayList<>(node.getOptions());
-            a.removeIf(s -> !s.toLowerCase().contains(args[args.length - 1].toLowerCase()));
-            return a;
+
+            if (node.isOptionsRegex()) {
+                List<String> regexResult = new ArrayList<>();
+                for (CompletionNode option : node.getNextOptions()) {
+                    boolean regexMatches = CompletionNode.containsRegex(option, end) || end.isEmpty();
+                    for (String s : option.getValues())
+                        regexResult.add((regexMatches ? "§d" : "§c") + s + "§r");
+                }
+                return regexResult;
+            }
+            else {
+                a.removeIf(s -> !s.toLowerCase().contains(end.toLowerCase()));
+                return a;
+            }
         }
         catch (Exception ex) {
             return new ArrayList<>();

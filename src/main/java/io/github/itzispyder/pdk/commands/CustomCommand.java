@@ -15,9 +15,9 @@ import java.util.List;
 
 public interface CustomCommand extends TabExecutor, Global {
 
-    void dispatchCommand(CommandSender sender, Args args);
+    void dispatchCommand(CommandSender sender, Command command, String label, Args args);
 
-    void dispatchCompletions(CompletionBuilder b);
+    void dispatchCompletions(CommandSender sender, Command command, String label, CompletionBuilder b);
 
     default void register() {
         CommandRegistry registry = this.getClass().getAnnotation(CommandRegistry.class);
@@ -46,7 +46,7 @@ public interface CustomCommand extends TabExecutor, Global {
                 error(sender, registry.permission().message());
                 return true;
             }
-            dispatchCommand(sender, new Args(args));
+            dispatchCommand(sender, command, label, new Args(args));
         }
         catch (Exception ex) {
             if (registry.printStackTrace()) {
@@ -61,7 +61,7 @@ public interface CustomCommand extends TabExecutor, Global {
     default List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         try {
             CompletionBuilder b = new CompletionBuilder(label);
-            dispatchCompletions(b);
+            dispatchCompletions(sender, command, label, b);
             CompletionNode node = b.getRootNode();
 
             if (args.length == 0) {

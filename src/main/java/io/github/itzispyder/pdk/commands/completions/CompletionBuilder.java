@@ -53,8 +53,16 @@ public class CompletionBuilder {
         return argRegex("^ *\\-?\\d+ *$", details);
     }
 
+    public CompletionBuilder argPosInt(String details) {
+        return argRegex("^ *\\d+ *$", details);
+    }
+
     public CompletionBuilder argDecimal(String details) {
         return argRegex("^ *\\-?\\d*\\.?\\d+ *$", details);
+    }
+
+    public CompletionBuilder argPosDecimal(String details) {
+        return argRegex("^ *\\d*\\.?\\d+ *$", details);
     }
 
     public CompletionBuilder argBool() {
@@ -67,6 +75,10 @@ public class CompletionBuilder {
 
     public CompletionBuilder argEnum(Class<? extends Enum<?>> type) {
         return argEnum(type, true);
+    }
+
+    public CompletionBuilder argOnlinePlayers() {
+        return arg(ArrayUtils.playerNames());
     }
 
     public CompletionBuilder arg(String... names) {

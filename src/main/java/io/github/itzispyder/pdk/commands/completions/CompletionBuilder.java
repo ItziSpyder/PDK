@@ -1,5 +1,7 @@
 package io.github.itzispyder.pdk.commands.completions;
 
+import io.github.itzispyder.pdk.utils.ArrayUtils;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -45,6 +47,26 @@ public class CompletionBuilder {
         CompletionBuilder b = new CompletionBuilder(regex, details);
         b.isBranch = true;
         return b;
+    }
+
+    public CompletionBuilder argInt(String details) {
+        return argRegex("^ *\\-?\\d+ *$", details);
+    }
+
+    public CompletionBuilder argDecimal(String details) {
+        return argRegex("^ *\\-?\\d*\\.?\\d+ *$", details);
+    }
+
+    public CompletionBuilder argBool() {
+        return arg("true", "false");
+    }
+
+    public CompletionBuilder argEnum(Class<? extends Enum<?>> type, boolean lowercase) {
+        return arg(ArrayUtils.enumNames(type, lowercase));
+    }
+
+    public CompletionBuilder argEnum(Class<? extends Enum<?>> type) {
+        return argEnum(type, true);
     }
 
     public CompletionBuilder arg(String... names) {

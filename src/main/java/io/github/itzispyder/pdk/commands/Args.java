@@ -17,10 +17,11 @@ public record Args(String... args) {
     }
 
     public Arg get(int index) {
-        if (args.length == 0) {
-            return new Arg("");
-        }
-        return new Arg(args[Math.min(Math.max(index, 0), args.length - 1)]);
+        if (args.length == 0)
+            throw new IllegalArgumentException("not enough arguments: arguments are empty");
+        if (index < 0 || index >= args.length)
+            throw new IllegalArgumentException("not enough arguments: argument %s is missing".formatted(index + 1));
+        return new Arg(args[index]);
     }
 
     public Arg first() {

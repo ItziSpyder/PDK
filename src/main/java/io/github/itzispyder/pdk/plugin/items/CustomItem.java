@@ -1,62 +1,51 @@
 package io.github.itzispyder.pdk.plugin.items;
 
-import io.github.itzispyder.pdk.utils.misc.Voidable;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
+import com.google.gson.Gson;
+import io.github.itzispyder.pdk.Global;
+import io.github.itzispyder.pdk.plugin.builders.ItemBuilder;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
-public interface CustomItem {
+public abstract class CustomItem implements Global {
 
-    Map<Class<? extends CustomItem>, CustomItem> items = new HashMap<>();
-    Map<String, CustomItem> registry = new HashMap<>();
+    public abstract void createItem(ItemBuilder item);
 
-    ItemStack getItem();
-    void onInteract(Player player, Action action, ItemStack item, PlayerInteractEvent event);
+    public abstract void updateMeta(ItemMeta meta);
 
-    default ItemStack register() {
-        return register(this);
-    }
+    public abstract void onInteract(PlayerInteractEvent e);
 
-    default String getName() {
-        String[] name = {"unnamed-custom-item"};
-        Voidable.of(this.getClass().getAnnotation(ItemRegistry.class)).accept(registry -> name[0] = registry.value());
-        return name[0];
-    }
-
-    static Map<String, CustomItem> getRegistry() {
-        return new HashMap<>(registry);
-    }
-
-    static boolean matchDisplay(ItemStack a, ItemStack b) {
-        return getDisplay(a).equals(getDisplay(b));
-    }
-
-    static boolean matchDisplay(String a, ItemStack b) {
-        return a.equals(getDisplay(b));
-    }
-
-    static boolean matchDisplay(ItemStack a, String b) {
-        return getDisplay(a).equals(b);
-    }
-
-    static <T extends CustomItem> T getItemByClass(Class<T> key) {
-        return (T)items.get(key);
-    }
-
-    static CustomItem getItemByName(String itemId) {
-        for (CustomItem value : registry.values()) {
-            if (value.getName().equalsIgnoreCase(itemId)) {
-                return value;
-            }
+    public String serialize() {
+        try {
+            Gson gson = new Gson();
+            return gson.toJson(this);
         }
-        return null;
+        catch (Exception ex) {
+            return "{}";
+        }
     }
 
-    static String getDisplay(ItemStack item) {
+    public String getRegistryKey() {
+        ItemRegistry r = this.getClass().getAnnotation(ItemRegistry.class);
+        if (r == null)
+            throw new IllegalArgumentException("Custom items need to have @ItemRegistry annotation!");
+        return r.value();
+    }
+
+    public void register(Object... initArgs) {
+        try {
+            Class<?>[] signature = Arrays.stream(initArgs).map(Object::getClass).toArray(Class<?>[]::new);
+            CustomItem item = this.getClass().getDeclaredConstructor(signature).newInstance(initArgs);
+            ItemManager.registerItem(getRegistryKey(), () -> item);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("Failed to register custom item: " + ex.getMessage());
+        }
+    }
+
+    public static String getDisplay(ItemStack item) {
         if (item == null) {
             return "";
         }
@@ -68,17 +57,15 @@ public interface CustomItem {
         }
     }
 
-    static void handleInteraction(PlayerInteractEvent event) {
-        String display = getDisplay(event.getItem());
-        if (registry.containsKey(display)) {
-            registry.get(display).onInteract(event.getPlayer(), event.getAction(), event.getItem(), event);
-        }
+    public static boolean matchDisplay(ItemStack a, ItemStack b) {
+        return getDisplay(a).equals(getDisplay(b));
     }
 
-    private static ItemStack register(CustomItem customItem) {
-        ItemStack item = customItem.getItem();
-        items.put(customItem.getClass(), customItem);
-        registry.put(getDisplay(item), customItem);
-        return item;
+    public static boolean matchDisplay(String a, ItemStack b) {
+        return a.equals(getDisplay(b));
+    }
+
+    public static boolean matchDisplay(ItemStack a, String b) {
+        return getDisplay(a).equals(b);
     }
 }

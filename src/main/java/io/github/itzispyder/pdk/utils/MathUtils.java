@@ -29,6 +29,14 @@ public final class MathUtils {
         return Math.min(max, Math.max(min, val));
     }
 
+    public static double clamp(double val) {
+        return clamp(val, 0, 1);
+    }
+
+    public static float clamp(float val) {
+        return (float) clamp(val, 0, 1);
+    }
+
     public static float[] toPolar(double x, double y, double z) {
         double pi2 = 2 * Math.PI;
         float pitch, yaw;

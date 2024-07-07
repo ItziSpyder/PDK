@@ -3,6 +3,7 @@ package io.github.itzispyder.pdk.events.listeners;
 import io.github.itzispyder.pdk.events.CustomListener;
 import io.github.itzispyder.pdk.plugin.gui.CustomGui;
 import io.github.itzispyder.pdk.plugin.items.CustomItem;
+import io.github.itzispyder.pdk.plugin.items.ItemManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -29,7 +30,9 @@ public class RegistryListeners implements CustomListener {
     @EventHandler
     private void onInteract(PlayerInteractEvent e) {
         try {
-            CustomItem.handleInteraction(e);
+            CustomItem context = ItemManager.getItemContext(e.getItem(), CustomItem.class);
+            if (context != null)
+                context.onInteract(e);
         }
         catch (Exception ignore) {}
     }

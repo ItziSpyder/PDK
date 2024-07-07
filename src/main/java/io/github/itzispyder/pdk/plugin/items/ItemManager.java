@@ -25,7 +25,8 @@ public class ItemManager {
         return key;
     }
 
-    public static ItemStack createItemContext(NamespacedKey key) {
+    public static ItemStack createItemContext(String namespace) {
+        NamespacedKey key = new NamespacedKey(Global.instance.getPlugin(), "items/" + namespace);
         Supplier<CustomItem> registry = itemRegistry.get(key);
         if (registry == null)
             throw new IllegalArgumentException("context not found in item registry");
@@ -91,6 +92,34 @@ public class ItemManager {
             }
         }
 
+        return null;
+    }
+
+    public static <C extends CustomItem> C getOrDefItemContext(ItemStack item, Class<C> type, C fallback) {
+        C context = getItemContext(item, type);
+        if (context != null)
+            return context;
+
+        NamespacedKey key = getKeyOf(fallback);
+        if (key == null)
+            return fallback;
+
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer data = meta.getPersistentDataContainer();
+
+        data.set(key, PersistentDataType.STRING, gson.toJson(fallback));
+        fallback.updateMeta(meta);
+        item.setItemMeta(meta);
+        return fallback;
+    }
+
+    public static NamespacedKey getKeyOf(CustomItem context) {
+        if (context == null)
+            return null;
+
+        for (Map.Entry<NamespacedKey, Supplier<CustomItem>> entry : itemRegistry.entrySet())
+            if (entry.getValue().get().getClass() == context.getClass())
+                return entry.getKey();
         return null;
     }
 
